@@ -220,51 +220,11 @@ export function ChatWindow(props: { conversationId: string }) {
           mb={1}
           color={"white"}
         >
-          Chat LangChain 🦜🔗
+          Prop Finder 🏠
         </Heading>
-        {messages.length > 0 ? (
-          <Heading fontSize="md" fontWeight={"normal"} mb={1} color={"white"}>
-            We appreciate feedback!
-          </Heading>
-        ) : (
-          <Heading
-            fontSize="xl"
-            fontWeight={"normal"}
-            color={"white"}
-            marginTop={"10px"}
-            textAlign={"center"}
-          >
-            Ask me anything about LangChain&apos;s{" "}
-            <Link href="https://python.langchain.com/" color={"blue.200"}>
-              Python documentation!
-            </Link>
-          </Heading>
-        )}
-        <div className="text-white flex flex-wrap items-center mt-4">
-          <div className="flex items-center mb-2">
-            <span className="shrink-0 mr-2">Powered by</span>
-            {llmIsLoading ? (
-              <Spinner className="my-2"></Spinner>
-            ) : (
-              <Select
-                value={llm}
-                onChange={(e) => {
-                  insertUrlParam("llm", e.target.value);
-                  setLlm(e.target.value);
-                }}
-                width={"240px"}
-              >
-                <option value="openai_gpt_3_5_turbo">GPT-3.5-Turbo</option>
-                <option value="anthropic_claude_3_haiku">Claude 3 Haiku</option>
-                <option value="google_gemini_pro">Google Gemini Pro</option>
-                <option value="fireworks_mixtral">
-                  Mixtral (via Fireworks.ai)
-                </option>
-                <option value="cohere_command">Cohere</option>
-              </Select>
-            )}
-          </div>
-        </div>
+        <Heading fontSize="md" fontWeight={"normal"} mb={1} color={"white"}>
+            Discover your dream home effortlessly!
+        </Heading>
       </Flex>
       <div
         className="flex flex-col-reverse w-full mb-2 overflow-auto"
@@ -291,7 +251,7 @@ export function ChatWindow(props: { conversationId: string }) {
           value={input}
           maxRows={5}
           marginRight={"56px"}
-          placeholder="What does RunnablePassthrough.assign() do?"
+          placeholder="Newly renovated apartment under 1.5M"
           textColor={"white"}
           borderColor={"rgb(58, 58, 61)"}
           onChange={(e) => setInput(e.target.value)}
@@ -320,7 +280,7 @@ export function ChatWindow(props: { conversationId: string }) {
         </InputRightElement>
       </InputGroup>
 
-      {messages.length === 0 ? (
+      {false ? (
         <footer className="flex justify-center absolute bottom-8">
           <a
             href="https://github.com/langchain-ai/chat-langchain"
