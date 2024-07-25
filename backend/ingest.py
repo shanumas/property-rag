@@ -79,12 +79,12 @@ def load_api_docs():
 
 def getMetadata(text):
     prompt = f"""
-    Extract the property type(house/apartment), price (in £), nr bedrooms, and internal square feet from the following 
-    property. Return comma-separated string in the format: [ptype], [price], [beds], [feet].
+    Extract the property type(house/apartment), image(jpg/png), price (in £), nr bedrooms, and internal square feet from the following 
+    property. Return comma-separated string in the format: [ptype], [price], [beds], [feet], [image] 
     Property Description:
     {text}
     Example output:
-    apartment, 100000, 3, 1393
+    apartment, 100000, 3, 1393, https://admin.russellsimpson.co.uk/images/reUpRT18Mb8erh--2aFCuKhVbwY=/14558/format-webp%7Cwidth-1440/24_Wallingford_Avenue-13_Lo.jpg
     """
     response = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -94,19 +94,20 @@ def getMetadata(text):
         ]
     )
     message_content = response.choices[0].message.content.strip()
-    print(f'Output from GPT {message_content}')
+
      # Ensure message content is not empty and parse the result
     if not message_content:
-        return {"ptype": "apartment", "price": 1500000, "beds": 1, "feet": 100}
+        return {"ptype": "apartment", "price": 1500000, "beds": 1, "feet": 100, "image":""}
     try:
-        ptype, price, beds, feet = message_content.split(', ')
+        ptype, price, beds, feet, image = message_content.split(', ')
         price = int(price.replace('£', '').replace(',', '').strip())
         beds = int(beds.strip())
         feet = int(feet.replace(',', '').strip())
+        image = image.strip()
     except (ValueError, IndexError):
-        return {"ptype": "apartment", "price": 1500000, "beds": 1, "feet": 100}
+        return {"ptype": "apartment", "price": 1500000, "beds": 1, "feet": 100, "image":""}
 
-    returnValue = {"ptype":ptype, "price":price, "beds": beds, "feet": feet}
+    returnValue = {"ptype":ptype, "price":price, "beds": beds, "feet": feet, "image":image}
     return returnValue
 
 def ingest_docs():
@@ -127,7 +128,7 @@ def ingest_docs():
         text_key="text",
         embedding=embedding,
         by_text=False,
-        attributes=["source", "ptype", "price", "beds", "feet"],
+        attributes=["source","image", "ptype", "price", "beds", "feet", "image"],
     )
 
     record_manager = SQLRecordManager(
@@ -142,14 +143,14 @@ def ingest_docs():
     for doc in docs_from_documentation:
         extractedMetadata = getMetadata(doc.page_content)
         txtSource = doc.metadata["source"]
-        print(f"Original source {txtSource}")
         if extractedMetadata :
             doc.metadata["source"] = 'https://www.russellsimpson.co.uk/buy/' + txtSource.split('\\')[-1].replace('.txt', '')
-            print(f"Changed source {doc.metadata}")
             doc.metadata["ptype"]=extractedMetadata["ptype"]
             doc.metadata["price"]=extractedMetadata["price"]
             doc.metadata["beds"]=extractedMetadata["beds"]
             doc.metadata["feet"]=extractedMetadata["feet"]
+            doc.metadata["image"]=extractedMetadata["image"]
+            print(f"Extracted metadata {doc.metadata}")
 
     docs_transformed = text_splitter.split_documents(
         docs_from_documentation

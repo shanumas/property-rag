@@ -142,7 +142,7 @@ export function ChatWindow(props: { conversationId: string }) {
             sourceStepName
           ].final_output.output.map((doc: Record<string, any>) => ({
             url: doc.metadata.source,
-            title: doc.metadata.source,
+            image: doc.metadata.image,
           }));
         }
         if (streamedResponse.id !== undefined) {

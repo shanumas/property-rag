@@ -4,7 +4,7 @@ import { sendFeedback } from "../utils/sendFeedback";
 
 export type Source = {
   url: string;
-  title: string;
+  image: string;
 };
 
 export function SourceBubble({
@@ -43,7 +43,7 @@ export function SourceBubble({
     >
       <CardBody>
         <Heading size={"sm"} fontWeight={"normal"} color={"white"}>
-          {source.title}
+        <img src={source.image} className="thumbnail" />
         </Heading>
       </CardBody>
     </Card>

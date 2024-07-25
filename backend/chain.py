@@ -80,7 +80,7 @@ def get_retriever() -> BaseRetriever:
         text_key="text",
         embedding=get_embeddings_model(),
         by_text=False,
-        attributes=["source", "ptype", "price", "beds", "feet"],
+        attributes=["source", "ptype", "price", "beds", "feet", "image"],
     )
     return weaviate_client.as_retriever(search_kwargs=dict(k=6))
 
@@ -116,6 +116,7 @@ def format_docs(docs: Sequence[Document]) -> str:
     for i, doc in enumerate(docs):
         doc_string = f"<doc id='{i+1}'>{doc.page_content}</doc>"
         formatted_docs.append(doc_string)
+        print(f'{doc.metadata}')
     return "\n".join(formatted_docs)
 
 
