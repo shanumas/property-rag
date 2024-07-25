@@ -127,7 +127,7 @@ def ingest_docs():
         text_key="text",
         embedding=embedding,
         by_text=False,
-        attributes=["ptype", "price", "beds", "feet"],
+        attributes=["source", "ptype", "price", "beds", "feet"],
     )
 
     record_manager = SQLRecordManager(

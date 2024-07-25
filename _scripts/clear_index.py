@@ -26,7 +26,7 @@ def clear():
         text_key="text",
         embedding=OpenAIEmbeddings(),
         by_text=False,
-        attributes=["ptype", "price", "beds", "feet"],
+        attributes=["source", "ptype", "price", "beds", "feet"],
     )
 
     record_manager = SQLRecordManager(
