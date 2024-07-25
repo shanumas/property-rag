@@ -7,13 +7,20 @@ from parser import langchain_docs_extractor
 import weaviate
 from bs4 import BeautifulSoup, SoupStrainer
 from constants import WEAVIATE_DOCS_INDEX_NAME
-from langchain.document_loaders import RecursiveUrlLoader, SitemapLoader
+from langchain_community.document_loaders import RecursiveUrlLoader, DirectoryLoader, TextLoader
 from langchain.indexes import SQLRecordManager, index
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.utils.html import PREFIXES_TO_IGNORE_REGEX, SUFFIXES_TO_IGNORE_REGEX
 from langchain_community.vectorstores import Weaviate
 from langchain_core.embeddings import Embeddings
 from langchain_openai import OpenAIEmbeddings
+
+from openai import OpenAI
+
+client = OpenAI(
+    # defaults to os.environ.get("OPENAI_API_KEY")
+    api_key=os.environ["OPENAI_API_KEY"],
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -23,32 +30,9 @@ def get_embeddings_model() -> Embeddings:
     return OpenAIEmbeddings(model="text-embedding-3-small", chunk_size=200)
 
 
-def metadata_extractor(meta: dict, soup: BeautifulSoup) -> dict:
-    title = soup.find("title")
-    description = soup.find("meta", attrs={"name": "description"})
-    html = soup.find("html")
-    return {
-        "source": meta["loc"],
-        "title": title.get_text() if title else "",
-        "description": description.get("content", "") if description else "",
-        "language": html.get("lang", "") if html else "",
-        **meta,
-    }
-
-
 def load_langchain_docs():
-    return SitemapLoader(
-        "https://python.langchain.com/sitemap.xml",
-        filter_urls=["https://python.langchain.com/"],
-        parsing_function=langchain_docs_extractor,
-        default_parser="lxml",
-        bs_kwargs={
-            "parse_only": SoupStrainer(
-                name=("article", "title", "html", "lang", "content")
-            ),
-        },
-        meta_function=metadata_extractor,
-    ).load()
+    text_loader_kwargs = {'autodetect_encoding': True}
+    return DirectoryLoader("./docs", glob="./*.txt", loader_cls=TextLoader, loader_kwargs=text_loader_kwargs).load()
 
 
 def load_langsmith_docs():
@@ -93,6 +77,37 @@ def load_api_docs():
         ),
     ).load()
 
+def getMetadata(text):
+    prompt = f"""
+    Extract the property type(house/apartment), price (in £), nr bedrooms, and internal square feet from the following 
+    property. Return comma-separated string in the format: [ptype], [price], [beds], [feet].
+    Property Description:
+    {text}
+    Example output:
+    apartment, 100000, 3, 1393
+    """
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt}
+        ]
+    )
+    message_content = response.choices[0].message.content.strip()
+    print(f'Output from GPT {message_content}')
+     # Ensure message content is not empty and parse the result
+    if not message_content:
+        return {"ptype": "apartment", "price": 1500000, "beds": 1, "feet": 100}
+    try:
+        ptype, price, beds, feet = message_content.split(', ')
+        price = int(price.replace('£', '').replace(',', '').strip())
+        beds = int(beds.strip())
+        feet = int(feet.replace(',', '').strip())
+    except (ValueError, IndexError):
+        return {"ptype": "apartment", "price": 1500000, "beds": 1, "feet": 100}
+
+    returnValue = {"ptype":ptype, "price":price, "beds": beds, "feet": feet}
+    return returnValue
 
 def ingest_docs():
     WEAVIATE_URL = os.environ["WEAVIATE_URL"]
@@ -112,7 +127,7 @@ def ingest_docs():
         text_key="text",
         embedding=embedding,
         by_text=False,
-        attributes=["source", "title"],
+        attributes=["ptype", "price", "beds", "feet"],
     )
 
     record_manager = SQLRecordManager(
@@ -122,24 +137,24 @@ def ingest_docs():
 
     docs_from_documentation = load_langchain_docs()
     logger.info(f"Loaded {len(docs_from_documentation)} docs from documentation")
-    docs_from_api = load_api_docs()
-    logger.info(f"Loaded {len(docs_from_api)} docs from API")
-    docs_from_langsmith = load_langsmith_docs()
-    logger.info(f"Loaded {len(docs_from_langsmith)} docs from Langsmith")
+
+        # retrieved document.
+    for doc in docs_from_documentation:
+        extractedMetadata = getMetadata(doc.page_content)
+        txtSource = doc.metadata["source"]
+        print(f"Original source {txtSource}")
+        if extractedMetadata :
+            doc.metadata["source"] = 'https://www.russellsimpson.co.uk/buy/' + txtSource.split('\\')[-1].replace('.txt', '')
+            print(f"Changed source {doc.metadata}")
+            doc.metadata["ptype"]=extractedMetadata["ptype"]
+            doc.metadata["price"]=extractedMetadata["price"]
+            doc.metadata["beds"]=extractedMetadata["beds"]
+            doc.metadata["feet"]=extractedMetadata["feet"]
 
     docs_transformed = text_splitter.split_documents(
-        docs_from_documentation + docs_from_api + docs_from_langsmith
+        docs_from_documentation
     )
     docs_transformed = [doc for doc in docs_transformed if len(doc.page_content) > 10]
-
-    # We try to return 'source' and 'title' metadata when querying vector store and
-    # Weaviate will error at query time if one of the attributes is missing from a
-    # retrieved document.
-    for doc in docs_transformed:
-        if "source" not in doc.metadata:
-            doc.metadata["source"] = ""
-        if "title" not in doc.metadata:
-            doc.metadata["title"] = ""
 
     indexing_stats = index(
         docs_transformed,
