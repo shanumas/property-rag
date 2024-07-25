@@ -169,15 +169,8 @@ def create_chain(llm: LanguageModelLike, retriever: BaseRetriever) -> Runnable:
     )
 
 
-gpt_3_5 = ChatOpenAI(model="gpt-3.5-turbo-0125", temperature=0, streaming=True)
-llm = gpt_3_5.configurable_alternatives(
-    # This gives this field an id
-    # When configuring the end runnable, we can then use this id to configure this field
-    ConfigurableField(id="llm"),
-    default_key="openai_gpt_3_5_turbo",
-).with_fallbacks(
-    [gpt_3_5]
-)
+gpt_3_5 = ChatOpenAI(model="gpt-4o-mini", temperature=0, streaming=True)
+llm = gpt_3_5
 
 retriever = get_retriever()
 answer_chain = create_chain(llm, retriever)
