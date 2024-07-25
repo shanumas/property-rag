@@ -36,7 +36,7 @@ const MODEL_TYPES = [
 ];
 
 const defaultLlmValue =
-  MODEL_TYPES[Math.floor(Math.random() * MODEL_TYPES.length)];
+  MODEL_TYPES[0];
 
 export function ChatWindow(props: { conversationId: string }) {
   const conversationId = props.conversationId;
