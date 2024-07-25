@@ -35,6 +35,7 @@ RESPONSE_TEMPLATE = """\
 You are my assistane, help me find best match for my property search query.
 Cite search results using [${{number}}] notation. Do not make up your own 
 answer, extract data only from this context.
+Always answer less than 30 words.
 <context>
     {context} 
 <context/>\
@@ -61,11 +62,8 @@ app.add_middleware(
     expose_headers=["*"],
 )
 
-
 WEAVIATE_URL = os.environ["WEAVIATE_URL"]
 WEAVIATE_API_KEY = os.environ["WEAVIATE_API_KEY"]
-
-
 class ChatRequest(BaseModel):
     question: str
     chat_history: Optional[List[Dict[str, str]]]
@@ -118,7 +116,6 @@ def format_docs(docs: Sequence[Document]) -> str:
     for i, doc in enumerate(docs):
         doc_string = f"<doc id='{i+1}'>{doc.page_content}</doc>"
         formatted_docs.append(doc_string)
-        print(f'FormattedDocs:{formatted_docs}')
     return "\n".join(formatted_docs)
 
 
