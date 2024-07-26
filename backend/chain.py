@@ -31,16 +31,6 @@ from langchain_core.runnables import (
 from langchain_openai import ChatOpenAI
 from langsmith import Client
 
-RESPONSE_TEMPLATE = """\
-You are my assistane, help me find best match for my property search query.
-Cite search results using [${{number}}] notation. Do not make up your own 
-answer, extract data only from this context.
-Always answer less than 30 words.
-<context>
-    {context} 
-<context/>\
-"""
-
 REPHRASE_TEMPLATE = """\
 Given the following conversation and a follow up question, rephrase the follow up \
 question to be a standalone question.
@@ -64,6 +54,18 @@ app.add_middleware(
 
 WEAVIATE_URL = os.environ["WEAVIATE_URL"]
 WEAVIATE_API_KEY = os.environ["WEAVIATE_API_KEY"]
+TOKENS = os.environ.get("TOKENS", '30')
+
+RESPONSE_TEMPLATE = """\
+You are my assistane, help me find best match for my property search query.
+Cite search results using [${{number}}] notation. Do not make up your own 
+answer, extract data only from this context.
+Always answer less than 30 words.
+<context>
+    {context} 
+<context/>\
+"""
+
 class ChatRequest(BaseModel):
     question: str
     chat_history: Optional[List[Dict[str, str]]]

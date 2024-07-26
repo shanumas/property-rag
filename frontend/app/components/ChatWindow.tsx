@@ -220,10 +220,7 @@ export function ChatWindow(props: { conversationId: string }) {
           mb={1}
           color={"white"}
         >
-          Prop Finder 🏠
-        </Heading>
-        <Heading fontSize="md" fontWeight={"normal"} mb={1} color={"white"}>
-            Discover your dream home effortlessly!
+          London - Find home easily! 🏠
         </Heading>
       </Flex>
       <div

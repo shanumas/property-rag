@@ -38,14 +38,15 @@ export function SourceBubble({
       onMouseLeave={onMouseLeave}
       cursor={"pointer"}
       alignSelf={"stretch"}
-      height="100%"
+      height="10vw"
       overflow={"hidden"}
+      title={source.url}
+      justifyContent="center"
+      alignItems="center"
     >
-      <CardBody>
-        <Heading size={"sm"} fontWeight={"normal"} color={"white"}>
+      <Heading size={"sm"} fontWeight={"normal"} color={"white"}>
         <img src={source.image} className="thumbnail" />
-        </Heading>
-      </CardBody>
+      </Heading>
     </Card>
   );
 }
