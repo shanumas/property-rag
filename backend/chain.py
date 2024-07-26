@@ -118,7 +118,6 @@ def format_docs(docs: Sequence[Document]) -> str:
     for i, doc in enumerate(docs):
         doc_string = f"<doc id='{i}'>{doc.page_content}</doc>"
         formatted_docs.append(doc_string)
-        print(f'Metadata: {doc.metadata}')
     return "\n".join(formatted_docs)
 
 
@@ -134,6 +133,7 @@ def serialize_history(request: ChatRequest):
 
 
 def create_chain(llm: LanguageModelLike, retriever: BaseRetriever) -> Runnable:
+    print('Create Chain reached')
     retriever_chain = create_retriever_chain(
         llm,
         retriever,

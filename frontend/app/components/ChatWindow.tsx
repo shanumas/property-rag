@@ -220,7 +220,7 @@ export function ChatWindow(props: { conversationId: string }) {
           mb={1}
           color={"white"}
         >
-          London - Find home easily! 🏠
+          London - Property search! 🏠
         </Heading>
       </Flex>
       <div
