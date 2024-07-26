@@ -44,7 +44,7 @@ export function SourceBubble({
       justifyContent="center"
       alignItems="center"
     >
-      <Heading size={"sm"} fontWeight={"normal"} color={"white"}>
+      <Heading size={"sm"} fontWeight={"normal"} color={"white"} margin={"5px 0"}>
         <img src={source.image} className="thumbnail" />
       </Heading>
     </Card>
