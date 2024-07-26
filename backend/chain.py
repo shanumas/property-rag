@@ -116,7 +116,7 @@ def create_retriever_chain(
 def format_docs(docs: Sequence[Document]) -> str:
     formatted_docs = []
     for i, doc in enumerate(docs):
-        doc_string = f"<doc id='{i+1}'>{doc.page_content}</doc>"
+        doc_string = f"<doc id='{i}'>{doc.page_content}</doc>"
         formatted_docs.append(doc_string)
         print(f'Metadata: {doc.metadata}')
     return "\n".join(formatted_docs)
