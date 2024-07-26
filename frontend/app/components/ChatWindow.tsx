@@ -248,7 +248,7 @@ export function ChatWindow(props: { conversationId: string }) {
           value={input}
           maxRows={5}
           marginRight={"56px"}
-          placeholder="Newly renovated apartment under 1.5M"
+          placeholder="type here..."
           textColor={"white"}
           borderColor={"rgb(58, 58, 61)"}
           onChange={(e) => setInput(e.target.value)}
