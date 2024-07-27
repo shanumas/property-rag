@@ -38,7 +38,7 @@ export function SourceBubble({
       onMouseLeave={onMouseLeave}
       cursor={"pointer"}
       alignSelf={"stretch"}
-      height="10vw"
+      height="20vw"
       overflow={"hidden"}
       title={source.url}
       justifyContent="center"

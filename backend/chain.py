@@ -57,12 +57,12 @@ WEAVIATE_API_KEY = os.environ["WEAVIATE_API_KEY"]
 TOKENS = os.environ.get("TOKENS", '30')
 
 RESPONSE_TEMPLATE = """\
-You are my assistane, help me find best match for my property search query.
-Cite search results using [${{number}}] notation. Do not make up your own 
-answer, extract data only from this context.
+You are my assistant, help me find best match for my property search query.
+Pick only top 3 from all contexts. Cite search results using [${{number}}] 
+notation. Do not make up your own answer, extract data only from this context.
 Always answer less than 30 words.
 <context>
-    {context} 
+    {context}
 <context/>\
 """
 
@@ -84,7 +84,7 @@ def get_retriever() -> BaseRetriever:
         by_text=False,
         attributes=["source", "ptype", "price", "beds", "feet", "image"],
     )
-    return weaviate_client.as_retriever(search_kwargs=dict(k=6))
+    return weaviate_client.as_retriever(search_kwargs=dict(k=3))
 
 
 def create_retriever_chain(
@@ -133,7 +133,6 @@ def serialize_history(request: ChatRequest):
 
 
 def create_chain(llm: LanguageModelLike, retriever: BaseRetriever) -> Runnable:
-    print('Create Chain reached')
     retriever_chain = create_retriever_chain(
         llm,
         retriever,
@@ -143,6 +142,7 @@ def create_chain(llm: LanguageModelLike, retriever: BaseRetriever) -> Runnable:
         .assign(context=lambda x: format_docs(x["docs"]))
         .with_config(run_name="RetrieveDocs")
     )
+    print(f'Create Chain reached: {context}')
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", RESPONSE_TEMPLATE),
