@@ -57,13 +57,22 @@ WEAVIATE_API_KEY = os.environ["WEAVIATE_API_KEY"]
 TOKENS = os.environ.get("TOKENS", '30')
 
 RESPONSE_TEMPLATE = """\
-You are my assistant, help me find best match for my property search query.
-Pick only top 3 from all contexts. Cite search results using [${{number}}] 
-notation. Do not make up your own answer, extract data only from this context.
-Always answer less than 30 words.
+Pick only one, best property from all contexts matching user needs. Cite search results 
+using [${{number}}] notation. If no property is found, suggest something close. Do not make 
+up your own answer, extract data only from this context. Always answer less than 50 words.  
+Write like this, for example, each item in new line.  
+Name: 
+Price:
+Type:
+Bedrooms: 
+Bathrooms: 
+Size: 
+Floor: 
+OtherAmenities: 
+OtherDetails:
 <context>
     {context}
-<context/>\
+<context/>
 """
 
 class ChatRequest(BaseModel):

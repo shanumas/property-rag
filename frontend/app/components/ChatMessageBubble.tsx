@@ -268,7 +268,7 @@ export function ChatMessageBubble(props: {
                 color={"blue.300"}
                 paddingBottom={"10px"}
               >
-                Sources
+                Top 3 matches
               </Heading>
               <HStack spacing={"10px"} maxWidth={"100%"} overflow={"auto"}>
                 {filteredSources.map((source, index) => (
@@ -295,7 +295,7 @@ export function ChatMessageBubble(props: {
           </Flex>
 
           <Heading size="lg" fontWeight="medium" color="blue.300">
-            Answer
+            Best match
           </Heading>
         </>
       )}
