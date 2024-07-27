@@ -255,6 +255,8 @@ export function ChatMessageBubble(props: {
     });
   };
 
+  const [selectedButton, setSelectedButton] = useState(1);
+
   return (
     <VStack align="start" spacing={5} pb={5}>
       {!isUser && filteredSources.length > 0 && (
@@ -269,6 +271,26 @@ export function ChatMessageBubble(props: {
                 paddingBottom={"10px"}
               >
                 Top 3 matches
+                <HStack spacing={3} ml={4}>
+                  <Button
+                    colorScheme={selectedButton === 1 ? "blue" : "gray"}
+                    onClick={() => setSelectedButton(1)}
+                  >
+                    1
+                  </Button>
+                  <Button
+                    colorScheme={selectedButton === 2 ? "blue" : "gray"}
+                    onClick={() => setSelectedButton(2)}
+                  >
+                    2
+                  </Button>
+                  <Button
+                    colorScheme={selectedButton === 3 ? "blue" : "gray"}
+                    onClick={() => setSelectedButton(3)}
+                  >
+                    3
+                  </Button>
+                </HStack>
               </Heading>
               <HStack spacing={"10px"} maxWidth={"100%"} overflow={"auto"}>
                 {filteredSources.map((source, index) => (
@@ -295,7 +317,7 @@ export function ChatMessageBubble(props: {
           </Flex>
 
           <Heading size="lg" fontWeight="medium" color="blue.300">
-            Best match
+            Showing match {selectedButton}
           </Heading>
         </>
       )}
