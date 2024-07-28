@@ -20,12 +20,13 @@ export function SourceBubble({
       }}
       cursor={"pointer"}
       alignSelf={"stretch"}
-      height="20vw"
+      width="50vw"
+      height="30vw"
       overflow={"hidden"}
       justifyContent="center"
       alignItems="center"
     >
-      <Heading size={"sm"} fontWeight={"normal"} color={"white"} margin={"5px 0"}>
+      <Heading size={"sm"} fontWeight={"normal"} color={"white"} padding={"5px"}>
         <img src={source} className="thumbnail" />
       </Heading>
     </Card>
