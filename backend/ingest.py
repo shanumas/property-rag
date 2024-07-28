@@ -79,8 +79,9 @@ def load_api_docs():
 
 def getMetadata(text):
     prompt = f"""
-    Extract the property type(house/apartment), image(jpg/png), price (in £), nr bedrooms, and internal square feet from the following 
-    property. Return comma-separated string in the format: [ptype], [price], [beds], [feet], [image] 
+    Extract the property type(house/apartment), images, price (in £), nr bedrooms, and internal square feet from the following 
+    property. Return comma-separated string in the format: [ptype], [price], [beds], [feet], [image1, image2]. Determine single
+    value for integers always, you decide, its no problem if it is wrong.
     Property Description:
     {text}
     Example output:
@@ -97,17 +98,19 @@ def getMetadata(text):
 
      # Ensure message content is not empty and parse the result
     if not message_content:
-        return {"ptype": "apartment", "price": 1500000, "beds": 1, "feet": 100, "image":""}
+        return {"ptype": "apartment", "price": 1500000, "beds": 1, "feet": 100, "images":""}
     try:
-        ptype, price, beds, feet, image = message_content.split(', ')
+        ptype, price, beds, feet, images = message_content.split(', ', 4)
         price = int(price.replace('£', '').replace(',', '').strip())
         beds = int(beds.strip())
         feet = int(feet.replace(',', '').strip())
-        image = image.strip()
-    except (ValueError, IndexError):
-        return {"ptype": "apartment", "price": 1500000, "beds": 1, "feet": 100, "image":""}
+        images = images.strip('[]')
+        print(f'Images extracted: {images}')
+    except (ValueError, IndexError) as e:
+        print(f'Error parsing: {e}')
+        return {"ptype": "apartment", "price": 1500000, "beds": 1, "feet": 100, "images":""}
 
-    returnValue = {"ptype":ptype, "price":price, "beds": beds, "feet": feet, "image":image}
+    returnValue = {"ptype":ptype, "price":price, "beds": beds, "feet": feet, "images":images}
     return returnValue
 
 def ingest_docs():
@@ -128,7 +131,7 @@ def ingest_docs():
         text_key="text",
         embedding=embedding,
         by_text=False,
-        attributes=["source","image", "ptype", "price", "beds", "feet", "image"],
+        attributes=["source", "ptype", "price", "beds", "feet", "images"],
     )
 
     record_manager = SQLRecordManager(
@@ -149,7 +152,7 @@ def ingest_docs():
             doc.metadata["price"]=extractedMetadata["price"]
             doc.metadata["beds"]=extractedMetadata["beds"]
             doc.metadata["feet"]=extractedMetadata["feet"]
-            doc.metadata["image"]=extractedMetadata["image"]
+            doc.metadata["images"]=extractedMetadata["images"]
             print(f"Extracted metadata {doc.metadata}")
 
     docs_transformed = text_splitter.split_documents(

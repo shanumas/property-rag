@@ -91,7 +91,7 @@ def get_retriever() -> BaseRetriever:
         text_key="text",
         embedding=get_embeddings_model(),
         by_text=False,
-        attributes=["source", "ptype", "price", "beds", "feet", "image"],
+        attributes=["source", "ptype", "price", "beds", "feet", "images"],
     )
     return weaviate_client.as_retriever(search_kwargs=dict(k=3))
 
