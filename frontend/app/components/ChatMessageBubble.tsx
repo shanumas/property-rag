@@ -308,7 +308,7 @@ export function ChatMessageBubble(props: {
                   .split(",")
                   .filter((source) => source)
                   .map((source, index) => (
-                    <Box alignSelf={"stretch"} width={40} margin={"20px"}>
+                    <Box key={index} alignSelf={"stretch"} width={40} margin={"20px"}>
                       <SourceBubble source={source} runId={runId} />
                     </Box>
                   ))}
