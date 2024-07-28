@@ -13,6 +13,7 @@ import {
   Button,
   Divider,
   Spacer,
+  Link,
 } from "@chakra-ui/react";
 import { sendFeedback } from "../utils/sendFeedback";
 import { apiBaseUrl } from "../utils/constants";
@@ -266,11 +267,21 @@ export function ChatMessageBubble(props: {
               <Heading
                 fontSize="lg"
                 fontWeight={"medium"}
-                mb={1}
                 color={"blue.300"}
                 paddingBottom={"10px"}
               >
-                Top 3 matches
+                <Box mb="10px">
+                  Match - {selectedButton} -
+                  <Link
+                    href={filteredSources[selectedButton - 1].url}
+                    isExternal
+                    color="blue.500"
+                    textDecoration="underline"
+                    fontSize="2xl"
+                  >
+                    Link
+                  </Link>
+                </Box>
                 <HStack spacing={3} ml={4}>
                   <Button
                     colorScheme={selectedButton === 1 ? "blue" : "gray"}
@@ -292,7 +303,7 @@ export function ChatMessageBubble(props: {
                   </Button>
                 </HStack>
               </Heading>
-              <HStack spacing={"10px"} maxWidth={"100%"} overflowX={"auto"}>
+              <HStack width={"100%"} overflowX={"auto"}>
                 {filteredSources[selectedButton - 1].images
                   .split(",")
                   .filter((source) => source)
@@ -304,10 +315,6 @@ export function ChatMessageBubble(props: {
               </HStack>
             </VStack>
           </Flex>
-
-          <Heading size="lg" fontWeight="medium" color="blue.300">
-            Showing match {selectedButton}
-          </Heading>
         </>
       )}
 
