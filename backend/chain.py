@@ -57,9 +57,9 @@ WEAVIATE_API_KEY = os.environ["WEAVIATE_API_KEY"]
 TOKENS = os.environ.get("TOKENS", '30')
 
 RESPONSE_TEMPLATE = """\
-Pick top 3 properties from all contexts matching user needs. Cite search results.If no 
-property is found, suggest something close. Do not make up your own answer, extract data 
-only from this context. Always answer less than 200 words. Write like this, for example, 
+Pick top 3 properties from all contexts matching user needs. If no 
+property is found, still suggest 3 properties. Do not make up your own answer, extract data 
+only from this context. Always answer less than 50 words. Write like this, for example, 
 each item in new line.
 Name: 
 Price:

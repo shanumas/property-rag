@@ -271,7 +271,7 @@ export function ChatMessageBubble(props: {
                 paddingBottom={"10px"}
               >
                 <Box mb="10px">
-                  Match - {selectedButton} -
+                  Showing   -   { }
                   <Link
                     href={filteredSources[selectedButton - 1].url}
                     isExternal
@@ -279,7 +279,7 @@ export function ChatMessageBubble(props: {
                     textDecoration="underline"
                     fontSize="2xl"
                   >
-                    Link
+                    {filteredSources[selectedButton - 1].url.split('/').pop()}
                   </Link>
                 </Box>
                 <HStack spacing={3} ml={4}>
