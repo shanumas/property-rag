@@ -293,14 +293,15 @@ export function ChatMessageBubble(props: {
                 </HStack>
               </Heading>
               <HStack spacing={"10px"} maxWidth={"100%"} overflowX={"auto"}>
-              {filteredSources[selectedButton].images.split(',').map((source, index) => (
-                  <Box alignSelf={"stretch"} width={40}>
-                    <SourceBubble
-                      source={source}
-                      runId={runId}
-                    />
-                  </Box>
-              ))}
+                {selectedButton}
+                {filteredSources[selectedButton - 1].images
+                  .split(",")
+                  .filter((source) => source)
+                  .map((source, index) => (
+                    <Box alignSelf={"stretch"} width={40}>
+                      <SourceBubble source={source} runId={runId} />
+                    </Box>
+                  ))}
               </HStack>
             </VStack>
           </Flex>
