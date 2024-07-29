@@ -31,3 +31,26 @@ code {
 li {
   padding: 4px;
 }
+
+/* styles.css */
+.responsive-thumbnail {
+  width: 200px;
+  height: 150px;
+  background-color: lightblue;
+}
+
+/* Media query for screens larger than 768px (desktop) */
+@media (min-width: 450px) {
+  .responsive-thumbnail {
+    width: 300px;
+    height: 180px;
+  }
+}
+
+/* Media query for screens larger than 768px (desktop) */
+@media (min-width: 768px) {
+  .responsive-thumbnail {
+    width: 400px;
+    height: 200px;
+  }
+}

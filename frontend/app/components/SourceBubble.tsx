@@ -20,11 +20,10 @@ export function SourceBubble({
       }}
       cursor={"pointer"}
       alignSelf={"stretch"}
-      width="50vw"
-      height="30vw"
       overflow={"hidden"}
       justifyContent="center"
       alignItems="center"
+      className="responsive-thumbnail"
     >
       <Heading size={"sm"} fontWeight={"normal"} color={"white"} padding={"5px"}>
         <img src={source} className="thumbnail" />
