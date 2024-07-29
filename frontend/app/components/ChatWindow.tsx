@@ -214,14 +214,6 @@ export function ChatWindow(props: { conversationId: string }) {
         alignItems={"center"}
         marginTop={messages.length > 0 ? "" : "64px"}
       >
-        <Heading
-          fontSize={messages.length > 0 ? "2xl" : "3xl"}
-          fontWeight={"medium"}
-          mb={1}
-          color={"white"}
-        >
-          London - Property search! 🏠
-        </Heading>
       </Flex>
       <div
         className="flex flex-col-reverse w-full mb-2 overflow-auto"
