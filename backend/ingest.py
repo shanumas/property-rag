@@ -85,7 +85,7 @@ def getMetadata(text):
     Property Description:
     {text}
     Example output:
-    apartment, 100000, 3, 1393, https://admin.russellsimpson.co.uk/images/reUpRT18Mb8erh--2aFCuKhVbwY=/14558/format-webp%7Cwidth-1440/24_Wallingford_Avenue-13_Lo.jpg
+    apartment, 100000, 3, 1393, https://admin/Avenue-13_Lo.jpg
     """
     response = client.chat.completions.create(
         model="gpt-4o-mini",

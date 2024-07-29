@@ -57,9 +57,9 @@ WEAVIATE_API_KEY = os.environ["WEAVIATE_API_KEY"]
 TOKENS = os.environ.get("TOKENS", '30')
 
 RESPONSE_TEMPLATE = """\
-Pick top 3 properties from all contexts matching user needs. If no 
-property is found, still suggest 3 properties. Do not make up your own answer, extract data 
-only from this context. Always answer less than 50 words. Write like this, for example, 
+Pick one best property from the database, state why you chose this property as first line. If no 
+property is found, still suggest one properties. Do not make up your own answer, extract data 
+only from this database. Always answer less than 30 words. Write like this, for example, 
 each item in new line.
 Name: 
 Price:
@@ -70,9 +70,9 @@ Size:
 Floor: 
 OtherAmenities: 
 OtherDetails:
-<context>
+<database>
     {context}
-<context/>
+<database/>
 """
 
 class ChatRequest(BaseModel):

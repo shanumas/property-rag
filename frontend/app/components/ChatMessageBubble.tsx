@@ -106,7 +106,7 @@ const createAnswerElements = (
     <span
       key={`content:${prevIndex}`}
       dangerouslySetInnerHTML={{
-        __html: DOMPurify.sanitize('Name:'+('-'+content.slice(prevIndex)).split('Name:')[1]),
+        __html: DOMPurify.sanitize(content),
       }}
     ></span>,
   );
@@ -273,7 +273,7 @@ export function ChatMessageBubble(props: {
                 <Box mb="10px">
                   Showing   -   { }
                   <Link
-                    href={filteredSources[selectedButton - 1].url}
+                    href={filteredSources[selectedButton - 1]?.url}
                     isExternal
                     color="blue.500"
                     textDecoration="underline"
