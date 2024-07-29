@@ -106,7 +106,7 @@ const createAnswerElements = (
     <span
       key={`content:${prevIndex}`}
       dangerouslySetInnerHTML={{
-        __html: DOMPurify.sanitize(content.slice(prevIndex)),
+        __html: DOMPurify.sanitize('Name:'+('-'+content.slice(prevIndex)).split('Name:')[1]),
       }}
     ></span>,
   );
