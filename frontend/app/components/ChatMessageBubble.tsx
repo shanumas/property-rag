@@ -272,15 +272,17 @@ export function ChatMessageBubble(props: {
               >
                 <Box mb="10px">
                   Showing   -   { }
-                  <Link
+                  
+                  {filteredSources[selectedButton - 1] && (<Link
                     href={filteredSources[selectedButton - 1]?.url}
                     isExternal
                     color="blue.500"
                     textDecoration="underline"
                     fontSize="2xl"
                   >
-                    {filteredSources[selectedButton - 1].url.split('/').pop()}
-                  </Link>
+                    {filteredSources[selectedButton - 1].url.split('/')[4]}
+                  </Link>)
+                  }
                 </Box>
                 <HStack spacing={3} ml={4}>
                   <Button
@@ -304,7 +306,7 @@ export function ChatMessageBubble(props: {
                 </HStack>
               </Heading>
               <HStack width={"100%"} overflowX={"auto"}>
-                {filteredSources[selectedButton - 1].images
+                {filteredSources[selectedButton - 1] && filteredSources[selectedButton - 1].images
                   .split(",")
                   .filter((source) => source)
                   .map((source, index) => (

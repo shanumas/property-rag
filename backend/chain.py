@@ -127,6 +127,7 @@ def format_docs(docs: Sequence[Document]) -> str:
     for i, doc in enumerate(docs):
         doc_string = f"<doc id='{i}'>{doc.page_content}</doc>"
         formatted_docs.append(doc_string)
+    print(f'Images queried: {doc.metadata}')
     return "\n".join(formatted_docs)
 
 

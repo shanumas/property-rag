@@ -32,7 +32,7 @@ def get_embeddings_model() -> Embeddings:
 
 def load_langchain_docs():
     text_loader_kwargs = {'autodetect_encoding': True}
-    return DirectoryLoader("./docs", glob="./*.txt", loader_cls=TextLoader, loader_kwargs=text_loader_kwargs).load()
+    return DirectoryLoader("./berkeley", glob="./*.txt", loader_cls=TextLoader, loader_kwargs=text_loader_kwargs).load()
 
 
 def load_langsmith_docs():
@@ -79,8 +79,8 @@ def load_api_docs():
 
 def getMetadata(text):
     prompt = f"""
-    Extract the property type(house/apartment), images, price (in £), nr bedrooms, and internal square feet from the following 
-    property. Return comma-separated string in the format: [ptype], [price], [beds], [feet], [image1, image2]. Determine single
+    Extract the property type(house/apartment), price (in £), nr bedrooms, and internal square feet from the following 
+    property. Return comma-separated string in the format: [ptype], [price], [beds], [feet]. Determine single
     value for integers always, you decide, its no problem if it is wrong.
     Property Description:
     {text}
@@ -98,19 +98,17 @@ def getMetadata(text):
 
      # Ensure message content is not empty and parse the result
     if not message_content:
-        return {"ptype": "apartment", "price": 1500000, "beds": 1, "feet": 100, "images":""}
+        return {"ptype": "apartment", "price": 1500000, "beds": 1, "feet": 100}
     try:
-        ptype, price, beds, feet, images = message_content.split(', ', 4)
+        ptype, price, beds, feet = message_content.split(', ', 4)
         price = int(price.replace('£', '').replace(',', '').strip())
         beds = int(beds.strip())
         feet = int(feet.replace(',', '').strip())
-        images = images.strip('[]')
-        print(f'Images extracted: {images}')
     except (ValueError, IndexError) as e:
         print(f'Error parsing: {e}')
-        return {"ptype": "apartment", "price": 1500000, "beds": 1, "feet": 100, "images":""}
+        return {"ptype": "apartment", "price": 1500000, "beds": 1, "feet": 100}
 
-    returnValue = {"ptype":ptype, "price":price, "beds": beds, "feet": feet, "images":images}
+    returnValue = {"ptype":ptype, "price":price, "beds": beds, "feet": feet}
     return returnValue
 
 def ingest_docs():
@@ -131,7 +129,7 @@ def ingest_docs():
         text_key="text",
         embedding=embedding,
         by_text=False,
-        attributes=["source", "ptype", "price", "beds", "feet", "images"],
+        attributes=["source", "ptype", "price", "beds", "feet"],
     )
 
     record_manager = SQLRecordManager(
@@ -147,12 +145,18 @@ def ingest_docs():
         extractedMetadata = getMetadata(doc.page_content)
         txtSource = doc.metadata["source"]
         if extractedMetadata :
-            doc.metadata["source"] = 'https://www.russellsimpson.co.uk/buy/' + txtSource.split('\\')[-1].replace('.txt', '')
+            doc.metadata["source"] = doc.page_content.split(',')[0].replace('Property_link: ', '')
             doc.metadata["ptype"]=extractedMetadata["ptype"]
             doc.metadata["price"]=extractedMetadata["price"]
             doc.metadata["beds"]=extractedMetadata["beds"]
             doc.metadata["feet"]=extractedMetadata["feet"]
-            doc.metadata["images"]=extractedMetadata["images"]
+            # Extract image URLs using a loop
+            image_urls = []
+            for part in doc.page_content.split(','):
+                match = re.search(r'Image: (.+)', part)
+                if match:
+                    image_urls.append(match.group(1).strip())  # Extract the URL part and strip any extra spaces
+            doc.metadata["images"]=', '.join(image_urls)
             print(f"Extracted metadata {doc.metadata}")
 
     docs_transformed = text_splitter.split_documents(
