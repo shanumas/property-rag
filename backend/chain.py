@@ -57,9 +57,9 @@ WEAVIATE_API_KEY = os.environ["WEAVIATE_API_KEY"]
 TOKENS = os.environ.get("TOKENS", '30')
 
 RESPONSE_TEMPLATE = """\
-Pick one best property from the database, state why you chose this property as first line. If no 
+Pick one best property from the database, state why you chose this property first in 10 words. If no 
 property is found, still suggest one properties. Do not make up your own answer, extract data 
-only from this database. Always answer less than 30 words. Write like this, for example, 
+only from this database. Always answer less than 30 words. Then write like this, for example, 
 each item in new line.
 Name: 
 Price:
@@ -68,8 +68,7 @@ Bedrooms:
 Bathrooms: 
 Size: 
 Floor: 
-OtherAmenities: 
-OtherDetails:
+OtherAmenities:
 <database>
     {context}
 <database/>
@@ -127,7 +126,8 @@ def format_docs(docs: Sequence[Document]) -> str:
     for i, doc in enumerate(docs):
         doc_string = f"<doc id='{i}'>{doc.page_content}</doc>"
         formatted_docs.append(doc_string)
-    print(f'Images queried: {doc.metadata}')
+        print(f'Metadata answered: {doc.metadata}')
+    print(f'Documents formetted: {len(docs)} Metadata:  ')
     return "\n".join(formatted_docs)
 
 

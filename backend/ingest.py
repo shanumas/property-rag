@@ -34,49 +34,6 @@ def load_langchain_docs():
     text_loader_kwargs = {'autodetect_encoding': True}
     return DirectoryLoader("./berkeley", glob="./*.txt", loader_cls=TextLoader, loader_kwargs=text_loader_kwargs).load()
 
-
-def load_langsmith_docs():
-    return RecursiveUrlLoader(
-        url="https://docs.smith.langchain.com/",
-        max_depth=8,
-        extractor=simple_extractor,
-        prevent_outside=True,
-        use_async=True,
-        timeout=600,
-        # Drop trailing / to avoid duplicate pages.
-        link_regex=(
-            f"href=[\"']{PREFIXES_TO_IGNORE_REGEX}((?:{SUFFIXES_TO_IGNORE_REGEX}.)*?)"
-            r"(?:[\#'\"]|\/[\#'\"])"
-        ),
-        check_response_status=True,
-    ).load()
-
-
-def simple_extractor(html: str) -> str:
-    soup = BeautifulSoup(html, "lxml")
-    return re.sub(r"\n\n+", "\n\n", soup.text).strip()
-
-
-def load_api_docs():
-    return RecursiveUrlLoader(
-        url="https://api.python.langchain.com/en/latest/",
-        max_depth=8,
-        extractor=simple_extractor,
-        prevent_outside=True,
-        use_async=True,
-        timeout=600,
-        # Drop trailing / to avoid duplicate pages.
-        link_regex=(
-            f"href=[\"']{PREFIXES_TO_IGNORE_REGEX}((?:{SUFFIXES_TO_IGNORE_REGEX}.)*?)"
-            r"(?:[\#'\"]|\/[\#'\"])"
-        ),
-        check_response_status=True,
-        exclude_dirs=(
-            "https://api.python.langchain.com/en/latest/_sources",
-            "https://api.python.langchain.com/en/latest/_modules",
-        ),
-    ).load()
-
 def getMetadata(text):
     prompt = f"""
     Extract the property type(house/apartment), price (in £), nr bedrooms, and internal square feet from the following 
@@ -111,7 +68,20 @@ def getMetadata(text):
     returnValue = {"ptype":ptype, "price":price, "beds": beds, "feet": feet}
     return returnValue
 
+def vectorTest(docs_transformed, record_manager, vectorstore):
+    indexing_stats = index(
+        docs_transformed,
+        record_manager,
+        vectorstore,
+        cleanup="full",
+        source_id_key="source",
+        force_update=(os.environ.get("FORCE_UPDATE") or "false").lower() == "true",
+    )
+
+    logger.info(f"Vector Database Test: Indexing stats: {indexing_stats}")
+
 def ingest_docs():
+    
     WEAVIATE_URL = os.environ["WEAVIATE_URL"]
     WEAVIATE_API_KEY = os.environ["WEAVIATE_API_KEY"]
     RECORD_MANAGER_DB_URL = os.environ["RECORD_MANAGER_DB_URL"]
@@ -137,6 +107,9 @@ def ingest_docs():
     )
     record_manager.create_schema()
 
+    #Test connection before fetching docs (and metadata extraction from llm)
+    vectorTest([], record_manager, vectorstore)
+
     docs_from_documentation = load_langchain_docs()
     logger.info(f"Loaded {len(docs_from_documentation)} docs from documentation")
 
@@ -156,7 +129,8 @@ def ingest_docs():
                 match = re.search(r'Image: (.+)', part)
                 if match:
                     image_urls.append(match.group(1).strip())  # Extract the URL part and strip any extra spaces
-            doc.metadata["images"]=', '.join(image_urls)
+            #Limit to last 2 images only. Otherwise it gets too much on frontend
+            doc.metadata["images"] = ', '.join(image_urls[-2:])
             print(f"Extracted metadata {doc.metadata}")
 
     docs_transformed = text_splitter.split_documents(
