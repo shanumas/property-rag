@@ -60,7 +60,7 @@ RESPONSE_TEMPLATE = """\
 Summarize each property price, beds, bath from database.
 Seperate each property with a line break.
 name, - sq feet in one line
-💰 price, 🛏️ beds,🛁 bath, floor no in one line
+💰 price, 🛏️ beds,🛁 bath in one line
 Reason for chosing in less than 10 words
 Other amenities in one line in less than 10 words
 2:
