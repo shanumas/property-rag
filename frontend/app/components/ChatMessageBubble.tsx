@@ -258,12 +258,6 @@ export function ChatMessageBubble(props: {
 
   const [selectedButton, setSelectedButton] = useState(1);
 
-  // Handler function for button clicks
-  const handleButtonClick = (index:number) => {
-    setSelectedButton(index);
-    answerElements[0].props.dangerouslySetInnerHTML.__html = "Uma";
-  };
-
   return (
     <VStack align="start" spacing={5} pb={5}>
       {!isUser && filteredSources.length > 0 && (
@@ -291,19 +285,19 @@ export function ChatMessageBubble(props: {
                 <HStack spacing={3} ml={4}>
                   <Button
                     colorScheme={selectedButton === 1 ? "blue" : "gray"}
-                    onClick={() => handleButtonClick(1)}
+                    onClick={() => setSelectedButton(1)}
                   >
                     1
                   </Button>
                   <Button
                     colorScheme={selectedButton === 2 ? "blue" : "gray"}
-                    onClick={() => handleButtonClick(2)}
+                    onClick={() => setSelectedButton(2)}
                   >
                     2
                   </Button>
                   <Button
                     colorScheme={selectedButton === 3 ? "blue" : "gray"}
-                    onClick={() => handleButtonClick(3)}
+                    onClick={() => setSelectedButton(3)}
                   >
                     3
                   </Button>
