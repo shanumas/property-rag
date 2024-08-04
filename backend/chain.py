@@ -57,12 +57,13 @@ WEAVIATE_API_KEY = os.environ["WEAVIATE_API_KEY"]
 TOKENS = os.environ.get("TOKENS", '30')
 
 RESPONSE_TEMPLATE = """\
-For each property write why this property is good match, in less than 10 words.
-Also add good features to highlight except name, type, price, bedrooms, bathrooma and size.
-Seperate each property in new line with
-Prop1: Reason for choosing
-Other amenities
-<hr>
+Summarize each property price, beds, bath from database.
+Seperate each property with a line break.
+1: 💰 price, 🛏️ beds,🛁 bath in one line
+Reason for chosing in one line
+Other amenities in one line
+2:
+3:
 <database>
     {context}
 <database/>
