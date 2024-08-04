@@ -57,18 +57,12 @@ WEAVIATE_API_KEY = os.environ["WEAVIATE_API_KEY"]
 TOKENS = os.environ.get("TOKENS", '30')
 
 RESPONSE_TEMPLATE = """\
-Pick one best property from the database, state why you chose this property first in 10 words. If no 
-property is found, still suggest one properties. Do not make up your own answer, extract data 
-only from this database. Always answer less than 30 words. Then write like this, for example, 
-each item in new line.
-Name: 
-Price:
-Type:
-Bedrooms: 
-Bathrooms: 
-Size: 
-Floor: 
-OtherAmenities:
+For each property write why this property is good match, in less than 10 words.
+Also add good features to highlight except name, type, price, bedrooms, bathrooma and size.
+Seperate each property in new line with
+Prop1: Reason for choosing
+Other amenities
+<hr>
 <database>
     {context}
 <database/>

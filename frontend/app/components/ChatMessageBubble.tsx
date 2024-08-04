@@ -258,6 +258,12 @@ export function ChatMessageBubble(props: {
 
   const [selectedButton, setSelectedButton] = useState(1);
 
+  // Handler function for button clicks
+  const handleButtonClick = (index:number) => {
+    setSelectedButton(index);
+    answerElements[0].props.dangerouslySetInnerHTML.__html = "Uma";
+  };
+
   return (
     <VStack align="start" spacing={5} pb={5}>
       {!isUser && filteredSources.length > 0 && (
@@ -270,9 +276,7 @@ export function ChatMessageBubble(props: {
                 color={"blue.300"}
                 paddingBottom={"10px"}
               >
-                <Box mb="10px">
-                  Showing   -   { }
-                  
+                <Box mb="10px">                  
                   {filteredSources[selectedButton - 1] && (<Link
                     href={filteredSources[selectedButton - 1]?.url}
                     isExternal
@@ -287,19 +291,19 @@ export function ChatMessageBubble(props: {
                 <HStack spacing={3} ml={4}>
                   <Button
                     colorScheme={selectedButton === 1 ? "blue" : "gray"}
-                    onClick={() => setSelectedButton(1)}
+                    onClick={() => handleButtonClick(1)}
                   >
                     1
                   </Button>
                   <Button
                     colorScheme={selectedButton === 2 ? "blue" : "gray"}
-                    onClick={() => setSelectedButton(2)}
+                    onClick={() => handleButtonClick(2)}
                   >
                     2
                   </Button>
                   <Button
                     colorScheme={selectedButton === 3 ? "blue" : "gray"}
-                    onClick={() => setSelectedButton(3)}
+                    onClick={() => handleButtonClick(3)}
                   >
                     3
                   </Button>
