@@ -30,6 +30,12 @@ from langchain_core.runnables import (
 )
 from langchain_openai import ChatOpenAI
 from langsmith import Client
+from langchain.chains.query_constructor.base import (
+    StructuredQueryOutputParser,
+    get_query_constructor_prompt,
+)
+from langchain.chains.query_constructor.base import AttributeInfo
+from langchain.retrievers.self_query.base import SelfQueryRetriever
 
 REPHRASE_TEMPLATE = """\
 Given the following conversation and a follow up question, rephrase the follow up \
@@ -69,6 +75,28 @@ Other amenities in one line in less than 10 words
 <database/>
 """
 
+metadata_field_info = [
+    AttributeInfo(
+        name="ptype",
+        description="Type of property user wants. One of ['apartment', 'house']",
+        type="string",
+    ),
+    AttributeInfo(
+        name="price",
+        description="Users property budget",
+        type="integer",
+    ),
+    AttributeInfo(
+        name="beds",
+        description="Bedrooms user wants",
+        type="integer",
+    ),
+    AttributeInfo(
+        name="feet", description="Size of property in square feet", type="float"
+    ),
+]
+document_content_description = "Brief summary of user propert search query"
+
 class ChatRequest(BaseModel):
     question: str
     chat_history: Optional[List[Dict[str, str]]]
@@ -87,7 +115,11 @@ def get_retriever() -> BaseRetriever:
         by_text=False,
         attributes=["source", "ptype", "price", "beds", "feet", "images"],
     )
-    return weaviate_client.as_retriever(search_kwargs=dict(k=3))
+    # Generate a prompt and parse output
+    prompt = get_query_constructor_prompt(document_content_description, metadata_field_info)
+    output_parser = StructuredQueryOutputParser.from_components()
+    query_constructor = prompt | llm | output_parser
+    return weaviate_client.as_retriever(search_kwargs=dict(k=3), query_constructor=query_constructor,)
 
 
 def create_retriever_chain(
