@@ -32,7 +32,7 @@ def get_embeddings_model() -> Embeddings:
 
 def load_langchain_docs():
     text_loader_kwargs = {'autodetect_encoding': True}
-    return DirectoryLoader("./berkeley", glob="./*.txt", loader_cls=TextLoader, loader_kwargs=text_loader_kwargs).load()
+    return DirectoryLoader("./docs", glob="./*.txt", loader_cls=TextLoader, loader_kwargs=text_loader_kwargs).load()
 
 def getMetadata(text):
     prompt = f"""

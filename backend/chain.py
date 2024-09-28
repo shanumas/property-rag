@@ -95,7 +95,7 @@ metadata_field_info = [
         name="feet", description="Size of property in square feet", type="float"
     ),
 ]
-document_content_description = "Brief summary of user propert search query"
+document_content_description = "Brief summary of user property search query"
 
 class ChatRequest(BaseModel):
     question: str
