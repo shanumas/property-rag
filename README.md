@@ -1,5 +1,8 @@
 This repo is created with chat-langchain as its starter
 
+![WhatsApp Image 2025-06-24 at 09 57 53](https://github.com/user-attachments/assets/41d89150-ce5e-4711-9c12-644fc39c9ddf)
+
+
 # property-rag is a semantic search chatbot designed for real estate property search in London. It leverages a hybrid retrieval approach to deliver highly relevant property matches:
 
 Hybrid Search Workflow:
